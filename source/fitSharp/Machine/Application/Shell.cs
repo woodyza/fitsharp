@@ -5,6 +5,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
 using fitSharp.IO;
 using fitSharp.Machine.Engine;
@@ -36,9 +37,15 @@ namespace fitSharp.Machine.Application {
             }
         }
 
-        static string LookForAppConfig(string[] commandLineArguments) {
+        string LookForAppConfig(string[] commandLineArguments) {
             for (int i = 0; i < commandLineArguments.Length - 1; i++) {
                 if (commandLineArguments[i] == "-a") return commandLineArguments[i + 1];
+                else if (commandLineArguments[i] == "-c")
+                {
+                  ParseArguments(commandLineArguments);
+                  Settings settings = configuration.GetItem<Settings>();
+                  if (!String.IsNullOrEmpty(settings.AppConfigFile)) return settings.AppConfigFile;
+                }
             }
             return string.Empty;
         }
@@ -55,7 +62,7 @@ namespace fitSharp.Machine.Application {
         static int RunInNewDomain(string appConfigName, string[] commandLineArguments) {
             var appDomainSetup = new AppDomainSetup {
                 ApplicationBase = AppDomain.CurrentDomain.BaseDirectory,
-                ConfigurationFile = appConfigName
+                ConfigurationFile = Path.GetFullPath(appConfigName)
             };
             AppDomain newDomain = AppDomain.CreateDomain("fitSharp.Machine", null, appDomainSetup);
             int result;

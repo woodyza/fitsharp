@@ -5,6 +5,7 @@
 
 using System;
 using System.Configuration;
+using System.IO;
 using fitSharp.Machine.Model;
 
 namespace fitSharp.Machine.Application {
@@ -28,7 +29,7 @@ namespace fitSharp.Machine.Application {
         public string AppConfigFile {
             get { return appConfigFile; }
             set {
-                appConfigFile = value;
+                appConfigFile = Path.GetFullPath(value);
                 AppDomain.CurrentDomain.SetData("APP_CONFIG_FILE", value);
             }
         }
